@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>jquery-websocket-callback example</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <h1>jquery-websocket-callback example</h1>
+        <p>This example has no page output; all the action happens in the console. You may also check the Network Panel in DevTools to see the frames sent/received by the websocket.</p>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="jquery.websocket.callback.js"></script>
+        <script>
+
+            $( document ).ready(function() {
+
+                var myBrokerEcho = $.websocket({ 
+                    url: "ws://echo.websocket.org/"
+                });
+
+                myBrokerEcho.topic( "websocket.onOpen" ).subscribe( onOpen );
+
+                myBrokerEcho.topic( "websocket.onMessage" ).subscribe( onMessage );
+
+                var dfd = $.Deferred();
+                var topic = myBrokerEcho.topic( "websocket.send" );
+                dfd.done( topic.publish );
+
+                function onOpen( value ) {
+                  console.log("Connection Open!", value);
+                  dfd.resolve( "I'm resolved and sending a message that should echo back" );
+                }
+
+                function onMessage( value ) {
+                  console.log("Incoming Message!", value);
+                }
+            });
+        </script>
+
+    </body>
+</html>
